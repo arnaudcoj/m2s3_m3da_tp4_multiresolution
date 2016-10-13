@@ -124,7 +124,22 @@ void MultiCurve::synthesisStep() {
    */
   finer.resize(n*2); // finer will contain next level
 
+  //EX3
 
+  //2 first points
+  finer[0] = 3./4. * _currentCurve[n - 1] + 1./4. * _currentCurve[0]
+          + 3./4. * _detail[level][n - 1] - 1./4. * _detail[level][0];
+
+  finer[1] = 1./4. * _currentCurve[n - 1] + 3./4. * _currentCurve[0]
+          + 1./4. * _detail[level][n - 1] - 3./4. * _detail[level][0];
+
+  for(int i = 1; i < n; i++) {
+      finer[i * 2] = 3./4. * _currentCurve[i - 1] + 1./4. * _currentCurve[i]
+              + 3./4. * _detail[level][i - 1] - 1./4. * _detail[level][i];
+
+      finer[i * 2 + 1] = 1./4. * _currentCurve[i - 1] + 3./4. * _currentCurve[i]
+              + 1./4. * _detail[level][i - 1] - 3./4. * _detail[level][i];
+  }
 
   /* end TODO
    */
@@ -140,19 +155,21 @@ void MultiCurve::analysisStep() {
   int level=log2(n)-1;
   vector<Vector3> coarse;
   coarse.resize(n/2); // coarse will contain the previous level
+
+  //EX2
   _detail[level].resize(n/2);
 
   for(int i = 0; i < n/2; i++) {
-      coarse[i] = - 1. / 4. * _currentCurve[(2 * i + 3) % n]
+      coarse[i] = - 1. / 4. * _currentCurve[(2 * i) % n]
+              + 3. / 4. * _currentCurve[(2 * i + 1) % n]
               + 3. / 4. * _currentCurve[(2 * i + 2) % n]
-              + 3. / 4. * _currentCurve[(2 * i + 1) % n]
-              - 1. / 4. * _currentCurve[(2 * i) % n] ;
+              - 1. / 4. * _currentCurve[(2 * i + 3) % n] ;
 
 
-      _detail[level][i] = 1. / 4. * _currentCurve[(2 * i + 3) % n]
-              - 3. / 4. * _currentCurve[(2 * i + 2) % n]
-              + 3. / 4. * _currentCurve[(2 * i + 1) % n]
-              - 1. / 4. * _currentCurve[(2 * i) % n] ;
+      _detail[level][i] = 1. / 4. * _currentCurve[(2 * i) % n]
+              - 3. / 4. * _currentCurve[(2 * i + 1) % n]
+              + 3. / 4. * _currentCurve[(2 * i + 2) % n]
+              - 1. / 4. * _currentCurve[(2 * i + 3) % n] ;
   }
 
   _currentCurve=coarse; // _currentCurve is now the previous level
